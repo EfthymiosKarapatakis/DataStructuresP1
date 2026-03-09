@@ -19,7 +19,7 @@ int check(char* ekfrash) {
     for (int i = 0; i < len; i++) {
         char ch = ekfrash[i];   // loop καθε εναν χαρακτηρα της εκφρασης
         if (ch == '(' || ch == '[' || ch == '{') {
-            stack[++pos] = ch;  // τα βαζω στον πινακα στη θεση που ηταν πριντ (top)+1
+            stack[++pos] = ch;  // τα βαζω στον πινακα στη θεση που ηταν print (top)+1
         }
 
         else if (ch == ')' || ch == ']' || ch == '}') {

@@ -63,28 +63,18 @@ struct Node* insert(struct Node* node, int value) {
 
     if (value < node->data) {
         node->left = insert(node->left, value);
-    }
-
-    else if (value > node->data) {
+    } else if (value > node->data) {
         node->right = insert(node->right, value);
+    } else if (value == node->data) {
+        printf("The value %d is already in the tree!\n", value);
     }
-
-    // todo
-    // Αν υπαρχει duplicate τοτε?
-    // Option A: το αγνοω
-    // Option B: το επιτρεπω
-    /*
-    else if (value == tree->data) {
-
-    }
-    */
     return node;
 }
 
 struct Node* createNode(int value) {
     struct Node* newNode = malloc(sizeof(struct Node));
     if (newNode == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
+        fprintf(stderr, "Memory failed\n");
         exit(EXIT_FAILURE);
     }
     newNode->data = value;
