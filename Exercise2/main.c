@@ -57,7 +57,7 @@ struct Node* binaryTreeSearch(struct Node* node, int target) {
 
 
 struct Node* insert(struct Node* node, int value) {
-    if (node == NULL) {
+    if (node == NULL) {     // Αν δεν εχει ριζα
         return createNode(value);
     }
 
@@ -142,7 +142,7 @@ void freeTree(struct Node* node) {
 
 int main() {
     struct Node* root = NULL;  // Αρχικοποιηση ριζας
-    FILE *fptr = fopen("numbers.txt", "r");
+    FILE *fptr = fopen("numbers2.txt", "r");
 
     if (fptr == NULL) {
         printf("Error!\n");
