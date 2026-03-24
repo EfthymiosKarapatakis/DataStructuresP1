@@ -50,6 +50,14 @@ struct Queue{
 // Node functions
 struct Node* insert(struct Node* node, int value);
 struct Node* createNode(int value);
+void preorder(struct Node* n);
+void postorder(struct Node* n);
+void levelOrder(struct Node* n);
+void initializeQueue(struct Queue *q);
+bool isEmpty(struct Queue *q);
+bool isFull(struct Queue *q);
+void add_to_queue(struct Queue *q, struct Node* n);
+struct Node* remove_from_queue(struct Queue *q);
 
 struct Node* insert(struct Node* node, int value) {
     if (node == NULL) {
@@ -109,6 +117,33 @@ void postorder(struct Node* n) {
     printf("%d ", n->data);
 }
 
+void levelOrder(struct Node* n) {
+
+    if(n == NULL) {
+        return;
+    }
+
+    struct Queue q;
+    initializeQueue(&q);
+
+    add_to_queue(&q, n);
+
+    while(!isEmpty(&q)){
+        struct Node* current = remove_from_queue(&q);
+
+        printf("%d ", current->data);
+
+        if(current->left != NULL) {
+            add_to_queue(&q, current->left);
+        }
+        if(current->right != NULL) {
+            add_to_queue(&q, current->right);
+        }
+
+    }
+}
+
+
 // Queue functions
 
 void initializeQueue(struct Queue *q) {        // Initializing function for queue
@@ -141,32 +176,6 @@ struct Node* remove_from_queue(struct Queue *q) {         // Remove node in queu
     }
     q->front++;
     return q->items[q->front];
-}
-
-void levelOrder(struct Node* n) {
-
-    if(n == NULL) {
-        return;
-    }
-
-    struct Queue q;
-    initializeQueue(&q);
-
-    add_to_queue(&q, n);
-
-    while(!isEmpty(&q)){
-        struct Node* current = remove_from_queue(&q);
-
-        printf("%d ", current->data);
-
-        if(current->left != NULL) {
-            add_to_queue(&q, current->left);
-        }
-        if(current->right != NULL) {
-            add_to_queue(&q, current->right);
-        }
-
-    }
 }
 
 int main() {
