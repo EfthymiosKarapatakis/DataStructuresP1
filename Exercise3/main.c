@@ -63,6 +63,17 @@ struct Node* insert(struct Node* node, int value) {
     } else if (value == node->data) {                // 5<-10->15
         printf("The value %d is already in the tree!\n", value); //Doesn't allow same value input
     }
+    
+    /*
+    Για να παιρνει και τις ίδιες τιμές
+    
+    if (value <= node->data) {
+        node->left = insert(node->left, value);
+    } else if (value > node->data) {
+        node->right = insert(node->right, value);
+    }
+    */
+    
     return node;
 }
 
