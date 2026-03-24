@@ -59,9 +59,9 @@ struct Node* insert(struct Node* node, int value) {
     if (value < node->data) {
         node->left = insert(node->left, value);
     } else if (value > node->data) {
-        node->right = insert(node->right, value);
-    } else if (value == node->data) {
-        printf("The value %d is already in the tree!\n", value);
+        node->right = insert(node->right, value);     //basically makes a tree where the left side is always smaller than the right
+    } else if (value == node->data) {                // 5<-10->15
+        printf("The value %d is already in the tree!\n", value); //Doesn't allow same value input
     }
     return node;
 }
