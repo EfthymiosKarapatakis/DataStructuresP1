@@ -27,7 +27,7 @@
 #define BUFFER 100
 
 struct Node {
-    char data;
+    int data;
     struct Node* left;
     struct Node* right;
 };
@@ -45,6 +45,8 @@ struct Queue {
 
 int max(int a, int b);
 
+void inorderPrint(struct Node* root);
+
 // Node functions
 
 struct Node* createNode(int value);
@@ -61,13 +63,24 @@ int isEmpty(struct Queue* q);
 // Tree functions
 
 int search(int arr[], int value, int left, int right);
-struct Node* buildTreeRecursive(int inorder[], int preorder[], int *preIndex, int left, int right);
-struct Node* buildTree(int inorder[], int preorder[]);
+struct Node* buildTreePreRecursive(int inorder[], int preorder[], int *preIndex, int left, int right);
+struct Node* buildPreTree(int inorder[], int preorder[], int size);
 int getHeight(struct Node* root, int h);
+struct Node* buildTreePostRecursive(int inorder[], int postorder[], int *postIndex, int left, int right);
+struct Node* buildPostTree(int inorder[], int postorder[], int size);
 
 
 int max(int a, int b) {
     return (a>b) ? a:b;
+}
+
+void inorderPrint(struct Node* root) {
+    if(root == NULL) {
+        return;
+    }
+    inorderPrint(root->left);
+    printf("%d ", root->data);
+    inorderPrint(root->right);
 }
 
 // Node functions
@@ -146,7 +159,7 @@ int search(int arr[], int value, int left, int right){
     return -1;
 }
 
-struct Node* buildTreeRecursive(int inorder[], int preorder[], int *preIndex, int left, int right) {
+struct Node* buildTreePreRecursive(int inorder[], int preorder[], int *preIndex, int left, int right) {
     
     if (left > right) {
         return NULL;
@@ -159,15 +172,15 @@ struct Node* buildTreeRecursive(int inorder[], int preorder[], int *preIndex, in
 
     int index = search(inorder, rootVal, left, right);
 
-    root->left = buildTreeRecursive(inorder, preorder, preIndex, left, index-1);
-    root->right = buildTreeRecursive(inorder, preorder, preIndex, index+1,right);
+    root->left = buildTreePreRecursive(inorder, preorder, preIndex, left, index-1);
+    root->right = buildTreePreRecursive(inorder, preorder, preIndex, index+1,right);
 
     return root;
 }
 
-struct Node* buildTree(int inorder[], int preorder[]) {
+struct Node* buildPreTree(int inorder[], int preorder[], int size) {
     int preIndex = 0;
-    struct Node* root = buildTreeRecursive(inorder, preorder, &preIndex, 0, sizeof(preorder)/sizeof(preorder[0]) - 1);
+    struct Node* root = buildTreePreRecursive(inorder, preorder, &preIndex, 0, size - 1);
 
     return root;
 }
@@ -212,28 +225,52 @@ void levelOrder(struct Node* root) {
         }
 
         if (node->left == NULL) {
-            enqueue(q, createNode(-1), lvl +1);
+            enQueue(q, createNode(-1), lvl +1);
         } else {
-            enqueue(q, node->left, lvl +1);
+            enQueue(q, node->left, lvl +1);
         }
 
         if (node->right == NULL) {
-            enqueue(q, createNode(-1), lvl +1);
+            enQueue(q, createNode(-1), lvl +1);
         } else {
-            enqueue(q, node->right, lvl +1);
+            enQueue(q, node->right, lvl +1);
         }
 
         free(top);
     }
 }
 
+struct Node* buildTreePostRecursive(int inorder[], int postorder[], int *postIndex, int left, int right) {
+
+    if(left> right) {
+        return NULL;
+    }
+
+    int rootVal = postorder[*postIndex];
+    (*postIndex)--;
+
+    struct Node* root = createNode(rootVal);
+
+    int index = search(inorder, rootVal, left, right);
+
+    root->right = buildTreePostRecursive(inorder, postorder, postIndex, index+1, right);
+    root->left = buildTreePostRecursive(inorder, postorder, postIndex, left, index-1);
+
+    return root;
+}
+
+struct Node* buildPostTree(int inorder[], int postorder[], int size){
+    int postIndex = size -1;
+    return buildTreePostRecursive(inorder, postorder, &postIndex, 0, size-1);
+}
+
 
 int main() {
-    struct Node* root = NULL;  // Αρχικοποιηση ριζας
-    FILE *fptr1 = fopen("preorder.txt", "r");
-    int preorder[BUFFER];
+    int size = 0;
+    FILE *fptr = fopen("inorder.txt", "r");
+    int inorder[BUFFER];
 
-    if (fptr1 == NULL) {
+    if (fptr == NULL) {
         printf("Error!\n");
         return 1;
     }
@@ -241,27 +278,58 @@ int main() {
     int value;
     int i=0;
 
-    while (fscanf(fptr1, "%d", &value) == 1) {
-        preorder[i] = value;
+    while (fscanf(fptr, "%d", &value) == 1) {
+        inorder[i] = value;
         i++;
+        size++;
     }
+    fclose(fptr);
 
-    FILE *fptr2 = fopen("inorder.txt", "r");
-    int inorder[BUFFER];
+    fptr = fopen("preorder.txt", "r");
+    int preorder[BUFFER];
 
-    if (fptr2 == NULL) {
+    if (fptr == NULL) {
         printf("Error!\n");
         return 1;
     }
 
     i=0;
 
-    while (fscanf(fptr2, "%d", &value) == 1) {
-        inorder[i] = value;
+    while (fscanf(fptr, "%d", &value) == 1) {
+        preorder[i] = value;
         i++;
     }
+    fclose(fptr);
 
-    root = buildTree(inorder, preorder);
+    fptr = fopen("postorder.txt", "r");
+    int postorder[BUFFER];
+
+    if (fptr == NULL) {
+        printf("Error!\n");
+        return 1;
+    }
+
+    i=0;
+
+    while (fscanf(fptr, "%d", &value) == 1) {
+        postorder[i] = value;
+        i++;
+    }
+    fclose(fptr);
+
+    struct Node* preRoot = NULL;
+    preRoot = buildPreTree(inorder, preorder, size);
+
+    printf("Tree from preorder: \n");
+    inorderPrint(preRoot);
+
+    printf("\n\n");
+
+    struct Node* postRoot = NULL;
+    postRoot = buildPostTree(inorder, postorder, size);
+
+    printf("Tree from postorder: \n");
+    inorderPrint(postRoot);
 
     return 0;
 }
