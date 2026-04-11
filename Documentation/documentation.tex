@@ -1,0 +1,604 @@
+\documentclass[a4paper,12pt]{article}
+
+% ---------- FONT & LANGUAGE ----------
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\usepackage{caption}
+\usepackage{float}
+
+\setmainlanguage{greek}
+\setotherlanguage{english}
+
+% Γραμματοσειρές
+\newfontfamily\greekfont{Times New Roman}[Script=Greek, Scale=1.0]
+\newfontfamily\englishfont{Times New Roman}[Script=Latin, Scale=1.0]
+
+% Μονοσύστημα γραμματοσειρά για ελληνικά και κώδικα
+\newfontfamily\greekfonttt{Consolas}[Scale=MatchLowercase]  % Windows συχνά έχει Consolas
+\newfontfamily\englishfonttt{Consolas}[Scale=MatchLowercase]
+
+% ---------- PACKAGES ----------
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+% ---------- LISTINGS STYLE ----------
+\lstset{
+	language=C,
+	basicstyle=\greekfonttt\small,
+	keywordstyle=\color{blue},
+	stringstyle=\color{red},
+	commentstyle=\color{green!60!black},
+	numbers=left,
+	numberstyle=\tiny,
+	stepnumber=1,
+	numbersep=5pt,
+	frame=single,
+	breaklines=true,
+	showstringspaces=false
+}
+
+% ---------- TITLE ----------
+\title{Πρώτο Σετ Ασκήσεων \\ Δομές Δεδομένων 2025-2026}
+\author{
+	Ανδρικόπουλος Γιάννης ΑΜ: 1115519\\
+	Καραπατάκης Ευθύμιος ΑΜ: 1115521\\
+	Χριστοπούλου Αγγελική ΑΜ: 1115471
+}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black]{hyperref}
+\begin{document}
+	
+	\maketitle
+	\tableofcontents
+	\newpage
+	
+	% ==================================================
+	\section{Άσκηση 1: Ελεγκτής Έκφρασης με Στοίβα}
+	
+	\subsection{Εκφώνηση}
+	Υλοποιήστε συνάρτηση που χρησιμοποιεί στοίβα χαρακτήρων για να ελέγξει αν μια έκφραση περιέχει σωστά τοποθετημένες παρενθέσεις (), αγκύλες [] και άγκιστρα \{\}. Η συνάρτηση πρέπει να επιστρέφει 1 αν η έκφραση είναι σωστή, διαφορετικά 0.
+	
+	\subsection{Ανάλυση}
+	Για την επίλυση του προβλήματος χρησιμοποιείται στοίβα χαρακτήρων, η οποία ακολουθεί τη λογική LIFO (Last In First Out). Η στοίβα υλοποιείται με χρήση πίνακα.
+	
+	Η βασική ιδέα είναι ότι κάθε ανοιχτή παρένθεση αποθηκεύεται, ενώ κάθε κλειστή πρέπει να αντιστοιχεί στο τελευταίο αποθηκευμένο στοιχείο.
+	
+	Η στοίβα μπορεί να υλοποιηθεί είτε με πίνακα είτε με συνδεδεμένη λίστα. Στην παρούσα υλοποίηση χρησιμοποιήθηκε πίνακας για απλότητα και αποδοτικότητα.
+	
+	\subsection{Βασικές Συναρτήσεις}
+	
+	\subsubsection{Συνάρτηση ελέγχου έκφρασης}
+	Η κύρια συνάρτηση διατρέχει την έκφραση και διαχειρίζεται τη στοίβα.
+	
+	\begin{lstlisting}
+		int check(char* ekfrash) {
+			if (ch == '(' || ch == '[' || ch == '{') {
+				stack[++pos] = ch;
+			}
+		}
+	\end{lstlisting}
+	
+	Η παραπάνω λειτουργία εισάγει τις ανοιχτές παρενθέσεις στη στοίβα.
+	
+	\vspace{0.5cm}
+	
+	\begin{lstlisting}
+		if (pos == -1) return 0;
+	\end{lstlisting}
+	
+	Ελέγχεται αν η στοίβα είναι άδεια όταν εμφανίζεται κλειστή παρένθεση, κάτι που σημαίνει λανθασμένη έκφραση.
+	
+	\vspace{0.5cm}
+	
+	\begin{lstlisting}
+		char prohgoymeno = stack[pos--];
+	\end{lstlisting}
+	
+	Αφαιρείται το τελευταίο στοιχείο από τη στοίβα ώστε να ελεγχθεί η αντιστοιχία.
+	
+	\vspace{0.5cm}
+	
+	\begin{lstlisting}
+		if ((ch == ')' && prohgoymeno != '(') ||
+		(ch == ']' && prohgoymeno != '[') ||
+		(ch == '}' && prohgoymeno != '{')) {
+			return 0;
+		}
+	\end{lstlisting}
+	
+	Ελέγχεται αν οι παρενθέσεις ταιριάζουν μεταξύ τους.
+	
+	\subsection{Αλγόριθμος}
+	\begin{enumerate}
+		\item Διατρέχουμε την έκφραση χαρακτήρα-χαρακτήρα
+		\item Εισάγουμε τις ανοιχτές παρενθέσεις στη στοίβα
+		\item Για κάθε κλειστή:
+		\begin{itemize}
+			\item Ελέγχουμε αν η στοίβα είναι άδεια
+			\item Ελέγχουμε αν υπάρχει αντιστοιχία
+		\end{itemize}
+		\item Στο τέλος ελέγχουμε αν η στοίβα είναι άδεια
+	\end{enumerate}
+	
+	\subsection{Αποτελέσματα Εκτέλεσης}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\textwidth]{askisi1Screenshot1.png}
+		\caption{Εκτέλεση του προγράμματος με λάθος input}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\textwidth]{askisi1Screenshot2.png}
+		\caption{Εκτέλεση του προγράμματος με σωστό input}
+	\end{figure}
+	
+	\subsection{Πολυπλοκότητα}
+	Η χρονική πολυπλοκότητα είναι $O(n)$, ενώ η χωρική πολυπλοκότητα είναι επίσης $O(n)$.
+	
+	\subsection{Συμπεράσματα}
+	Η στοίβα αποτελεί κατάλληλη δομή για την επίλυση προβλημάτων αντιστοίχισης, καθώς επιτρέπει την αποδοτική παρακολούθηση της σειράς των στοιχείων.
+	\newpage
+	% ==================================================
+	\section{Άσκηση 2: Δυαδικό Δέντρο Αναζήτησης (BST)}
+	
+	\subsection{Εκφώνηση}
+	Υλοποιήστε συνάρτηση με το όνομα binaryTreeSearch που επιχειρεί να εντοπίσει μια καθορισμένη τιμή σε ένα δυαδικό δέντρο αναζήτησης με ακέραιους. Η συνάρτηση δέχεται ως ορίσματα τη ρίζα του δέντρου και το κλειδί αναζήτησης. Αν βρεθεί, επιστρέφει δείκτη στον κόμβο, αλλιώς NULL.
+	
+	Υλοποιήστε επίσης συναρτήσεις εισαγωγής και διαγραφής τιμής από το δέντρο. Να γίνει έλεγχος με κύριο πρόγραμμα.
+	
+	Υλοποιήστε είτε φυλλοπροσανατολισμένο είτε κομβοπροσανατολισμένο δέντρο και εξηγήστε θεωρητικά τη διαφοροποίηση των δύο προσεγγίσεων.
+	
+	\subsection{Ανάλυση}
+	Το δυαδικό δέντρο αναζήτησης (BST) είναι μια δομή δεδομένων όπου για κάθε κόμβο ισχύει:
+	\begin{itemize}
+		\item Τα στοιχεία στο αριστερό υποδέντρο είναι μικρότερα
+		\item Τα στοιχεία στο δεξί υποδέντρο είναι μεγαλύτερα
+	\end{itemize}
+	
+	Η ιδιότητα αυτή επιτρέπει αποδοτική υλοποίηση βασικών λειτουργιών όπως αναζήτηση, εισαγωγή και διαγραφή.
+	
+	Η παρούσα υλοποίηση είναι κομβοπροσανατολισμένη, όπου κάθε κόμβος περιέχει την τιμή και δείκτες προς τα παιδιά του.
+	
+	\subsection{Διαφορετικές Υλοποιήσεις Δέντρων}
+	
+	\subsubsection{Κομβοπροσανατολισμένο Δέντρο}
+	Σε αυτή την προσέγγιση, κάθε κόμβος αποθηκεύει δεδομένα. Η αναζήτηση μπορεί να τερματίσει σε οποιονδήποτε κόμβο του δέντρου.
+	
+	\subsubsection{Φυλλοπροσανατολισμένο Δέντρο}
+	Στην περίπτωση αυτή, τα δεδομένα αποθηκεύονται μόνο στα φύλλα, ενώ οι εσωτερικοί κόμβοι χρησιμοποιούνται για καθοδήγηση της αναζήτησης.
+	
+	Αν επιλεγόταν αυτή η υλοποίηση:
+	\begin{itemize}
+		\item Η αναζήτηση θα κατέληγε πάντα σε φύλλο
+		\item Η εισαγωγή θα δημιουργούσε νέα φύλλα
+		\item Οι εσωτερικοί κόμβοι θα περιείχαν μόνο τιμές σύγκρισης
+	\end{itemize}
+	
+	Επομένως, ο κώδικας θα διαφοροποιούνταν κυρίως στη δομή του κόμβου και στη λογική εισαγωγής/αναζήτησης.
+	
+	\subsection{Βασικές Συναρτήσεις}
+	
+	\subsubsection{Αναζήτηση}
+	\begin{lstlisting}
+		if (node == NULL) {
+			return NULL;
+		}
+		
+		if (node->data == target) {
+			return node;
+		}
+	\end{lstlisting}
+	
+	Αν το στοιχείο δεν υπάρχει ή βρεθεί, επιστρέφεται το κατάλληλο αποτέλεσμα.
+	
+	\begin{lstlisting}
+		if (target < node->data) {
+			return binaryTreeSearch(node->left, target);
+		} else {
+			return binaryTreeSearch(node->right, target);
+		}
+	\end{lstlisting}
+	
+	Η αναζήτηση συνεχίζεται στο κατάλληλο υποδέντρο.
+	
+	\subsubsection{Εισαγωγή}
+	\begin{lstlisting}
+		if (node == NULL) {
+			return createNode(value);
+		}
+	\end{lstlisting}
+	
+	Νέος κόμβος δημιουργείται όταν βρεθεί κενή θέση.
+	
+	\subsubsection{Διαγραφή}
+	\begin{itemize}
+		\item Διαγραφή φύλλου
+		\item Διαγραφή κόμβου με ένα παιδί
+		\item Διαγραφή κόμβου με δύο παιδιά
+	\end{itemize}
+	
+	\begin{lstlisting}
+		struct Node* successor = findMin(node->right);
+		node->data = successor->data;
+	\end{lstlisting}
+	
+	Χρησιμοποιείται ο inorder successor για τη διατήρηση της δομής.
+	
+	\subsection{Δεδομένα Εισόδου}
+	Το δέντρο δημιουργείται από αρχείο εισόδου (\texttt{numbers2.txt}), το οποίο περιέχει τις τιμές:
+	
+	\begin{center}
+		10, 20, 30, 40, 50, 60
+	\end{center}
+	
+	Οι τιμές εισάγονται σειριακά στο δέντρο.
+	
+	\subsection{Αποτελέσματα Εκτέλεσης}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\textwidth]{askisi2Screenshot1.png}
+		\caption{Εκτέλεση λειτουργιών στο δυαδικό δέντρο}
+	\end{figure}
+	
+	\subsection{Πολυπλοκότητα}
+	Η χρονική πολυπλοκότητα είναι:
+	\begin{itemize}
+		\item Μέση περίπτωση: $O(\log n)$
+		\item Χειρότερη περίπτωση: $O(n)$
+	\end{itemize}
+	
+	\subsection{Συμπεράσματα}
+	Τα δυαδικά δέντρα αναζήτησης προσφέρουν αποδοτική διαχείριση δεδομένων, ωστόσο η απόδοσή τους εξαρτάται από την ισορροπία του δέντρου. Η επιλογή υλοποίησης επηρεάζει σημαντικά τη συμπεριφορά των βασικών λειτουργιών.
+	\newpage
+	% ==================================================
+	\section{Άσκηση 3: Διαπεράσεις Δυαδικού Δέντρου}
+	
+	\subsection{Εκφώνηση}
+	(i) Υλοποιήστε συνάρτηση \texttt{levelOrder} για τη διέλευση δυαδικού δέντρου κατά επίπεδα χρησιμοποιώντας ουρά.
+	
+	(ii) Υλοποιήστε επίσης τις διαπεράσεις προδιάταξης (preorder) και μεταδιάταξης (postorder). Να γίνει έλεγχος με κύριο πρόγραμμα.
+	
+	\subsection{Ανάλυση}
+	Η διαπέραση ενός δυαδικού δέντρου είναι η διαδικασία επίσκεψης όλων των κόμβων του με συγκεκριμένη σειρά.
+	
+	Υπάρχουν δύο βασικές κατηγορίες:
+	\begin{itemize}
+		\item Αναδρομικές διαπεράσεις (DFS)
+		\item Μη αναδρομικές διαπεράσεις (BFS)
+	\end{itemize}
+	
+	Η διαπέραση κατά επίπεδα (level order) ανήκει στη δεύτερη κατηγορία και υλοποιείται με χρήση ουράς (queue), ενώ οι preorder και postorder υλοποιούνται αναδρομικά.
+	
+	Η ουρά στην παρούσα υλοποίηση υλοποιείται με πίνακα.
+	
+	\subsection{Διαπέραση κατά Επίπεδα (Level Order)}
+	Η διαπέραση αυτή επισκέπτεται τους κόμβους επίπεδο-επίπεδο, από αριστερά προς τα δεξιά.
+	
+	\subsubsection{Αλγόριθμος}
+	\begin{enumerate}
+		\item Εισάγουμε τη ρίζα στην ουρά
+		\item Όσο η ουρά δεν είναι άδεια:
+		\begin{itemize}
+			\item Αφαιρούμε τον πρώτο κόμβο
+			\item Εκτυπώνουμε την τιμή του
+			\item Εισάγουμε το αριστερό παιδί (αν υπάρχει)
+			\item Εισάγουμε το δεξί παιδί (αν υπάρχει)
+		\end{itemize}
+	\end{enumerate}
+	
+	\subsubsection{Βασική Υλοποίηση}
+	\begin{lstlisting}
+		add_to_queue(&q, root);
+		
+		while(!isEmpty(&q)){
+			struct Node* current = remove_from_queue(&q);
+			printf("%d ", current->data);
+			
+			if(current->left != NULL)
+			add_to_queue(&q, current->left);
+			
+			if(current->right != NULL)
+			add_to_queue(&q, current->right);
+		}
+	\end{lstlisting}
+	
+	\subsection{Προδιάταξη (Preorder)}
+	Στην προδιάταξη η σειρά επίσκεψης είναι:
+	\begin{center}
+		Ρίζα → Αριστερό Υποδέντρο → Δεξί Υποδέντρο
+	\end{center}
+	
+	\begin{lstlisting}
+		printf("%d ", n->data);
+		preorder(n->left);
+		preorder(n->right);
+	\end{lstlisting}
+	
+	\subsection{Μεταδιάταξη (Postorder)}
+	Στη μεταδιάταξη η σειρά είναι:
+	\begin{center}
+		Αριστερό Υποδέντρο → Δεξί Υποδέντρο → Ρίζα
+	\end{center}
+	
+	\begin{lstlisting}
+		postorder(n->left);
+		postorder(n->right);
+		printf("%d ", n->data);
+	\end{lstlisting}
+	
+	\subsection{Υλοποίηση Ουράς}
+	Η ουρά υλοποιείται με πίνακα σταθερού μεγέθους.
+	
+	\begin{lstlisting}
+		q->rear++;
+		q->items[q->rear] = n;
+	\end{lstlisting}
+	
+	Η εισαγωγή γίνεται στο τέλος της ουράς.
+	
+	\begin{lstlisting}
+		q->front++;
+		return q->items[q->front];
+	\end{lstlisting}
+	
+	Η αφαίρεση γίνεται από την αρχή της ουράς.
+	
+	Η ουρά μπορεί εναλλακτικά να υλοποιηθεί με συνδεδεμένη λίστα, επιτρέποντας δυναμικό μέγεθος.
+	
+	\subsection{Δεδομένα Εισόδου}
+	Το δέντρο δημιουργείται από αρχείο (\texttt{numbers3.txt}) που περιέχει τιμές:
+	
+	\begin{center}
+		50, 25, 75, 10, 30, 60, 90, 5, 15, 27, 35, 55, 65, 85, 95, 1, 8, 12, 18, 28
+	\end{center}
+	
+	Οι οποίες εισάγονται σειριακά.
+	
+	\subsection{Αποτελέσματα Εκτέλεσης}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\textwidth]{askisi3Screenshot1.png}
+		\caption{Αποτελέσματα διαπεράσεων του δέντρου}
+	\end{figure}
+	
+	\subsection{Πολυπλοκότητα}
+	Όλες οι διαπεράσεις επισκέπτονται κάθε κόμβο μία φορά.
+	
+	\begin{itemize}
+		\item Χρονική πολυπλοκότητα: $O(n)$
+		\item Χωρική πολυπλοκότητα: $O(n)$ (λόγω ουράς ή στοίβας αναδρομής)
+	\end{itemize}
+	
+	\subsection{Συμπεράσματα}
+	Οι διαπεράσεις αποτελούν βασική λειτουργία στα δέντρα και χρησιμοποιούνται σε πολλές εφαρμογές, όπως αναζήτηση, ταξινόμηση και επεξεργασία δεδομένων. Η επιλογή κατάλληλης μεθόδου εξαρτάται από το πρόβλημα που επιλύεται.
+	\newpage
+	% ==================================================
+	\section{Άσκηση 4: Ύψος και Βάθος Δυαδικού Δέντρου}
+	
+	\subsection{Εκφώνηση}
+	Αξιοποιώντας τις διαπεράσεις του προηγούμενου ερωτήματος, υπολογίστε:
+	
+	\begin{itemize}
+		\item Το ύψος του δυαδικού δέντρου
+		\item Το βάθος κάθε κόμβου του δέντρου
+	\end{itemize}
+	
+	Να υλοποιηθούν δύο συναρτήσεις και να γίνει έλεγχος με κύριο πρόγραμμα.
+	
+	\subsection{Ανάλυση}
+	Το ύψος ενός δυαδικού δέντρου ορίζεται ως το μέγιστο πλήθος ακμών από τη ρίζα μέχρι το πιο απομακρυσμένο φύλλο.
+	
+	Το βάθος ενός κόμβου είναι η απόσταση του από τη ρίζα.
+	
+	Η επίλυση βασίζεται σε αναδρομικές συναρτήσεις διαπέρασης του δέντρου.
+	
+	\subsection{Ύψος Δέντρου}
+	
+	Η συνάρτηση υπολογίζει αναδρομικά το ύψος του αριστερού και δεξιού υποδέντρου και επιστρέφει το μέγιστο.
+	
+	\begin{lstlisting}
+		int treeHeight(struct Node* n) {
+			if (n == NULL)
+			return -1;
+			
+			int left = treeHeight(n->left);
+			int right = treeHeight(n->right);
+			
+			return 1 + max(left, right);
+		}
+	\end{lstlisting}
+	
+	Η χρήση αναδρομής επιτρέπει τον υπολογισμό από τα φύλλα προς τη ρίζα.
+	
+	\subsection{Βάθος Κόμβων}
+	
+	Για κάθε κόμβο, το βάθος υπολογίζεται κατά τη διάρκεια της διάσχισης του δέντρου.
+	
+	\begin{lstlisting}
+		void treeDepth(struct Node* n, int depth) {
+			if (n == NULL)
+			return;
+			
+			printf("Node: %d, Depth: %d\n", n->data, depth);
+			
+			treeDepth(n->left, depth + 1);
+			treeDepth(n->right, depth + 1);
+		}
+	\end{lstlisting}
+	
+	Η συνάρτηση ξεκινά από τη ρίζα με βάθος 0 και αυξάνει κατά 1 σε κάθε επίπεδο.
+	
+	\subsection{Αλγόριθμος}
+	
+	\subsubsection{Ύψος}
+	\begin{enumerate}
+		\item Αν ο κόμβος είναι NULL επιστρέφουμε -1
+		\item Υπολογίζουμε αναδρομικά ύψος αριστερού υποδέντρου
+		\item Υπολογίζουμε αναδρομικά ύψος δεξιού υποδέντρου
+		\item Επιστρέφουμε 1 + μέγιστο των δύο
+	\end{enumerate}
+	
+	\subsubsection{Βάθος}
+	\begin{enumerate}
+		\item Ξεκινάμε από τη ρίζα με βάθος 0
+		\item Για κάθε παιδί αυξάνουμε το βάθος κατά 1
+		\item Εκτυπώνουμε το βάθος κάθε κόμβου
+	\end{enumerate}
+	
+	\subsection{Δεδομένα Εισόδου}
+	Το δέντρο κατασκευάζεται από το αρχείο \texttt{numbers4.txt}, το οποίο περιέχει τις τιμές:
+	
+	\begin{center}
+		50, 25, 75, 10, 30, 60, 90, 5, 15, 27, 35, 55, 65, 85, 95, 1, 8, 12, 18, 28
+	\end{center}
+	
+	Οι τιμές εισάγονται διαδοχικά σε δυαδικό δέντρο αναζήτησης.
+	
+	\subsection{Αποτελέσματα Εκτέλεσης}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\textwidth]{askisi4Screenshot1.png}
+		\caption{Ύψος δέντρου και βάθος κόμβων}
+	\end{figure}
+	
+	\subsection{Πολυπλοκότητα}
+	Κάθε κόμβος επισκέπτεται μία φορά, άρα:
+	
+	\begin{itemize}
+		\item Χρονική πολυπλοκότητα: $O(n)$
+		\item Χωρική πολυπλοκότητα: $O(h)$ λόγω αναδρομής, όπου $h$ το ύψος του δέντρου.
+	\end{itemize}
+	
+	
+	\subsection{Συμπεράσματα}
+	Ο υπολογισμός ύψους και βάθους βασίζεται σε αναδρομικές τεχνικές και αποτελεί θεμελιώδη εφαρμογή της θεωρίας των δυαδικών δέντρων. Οι συναρτήσεις αυτές είναι χρήσιμες σε πολλές εφαρμογές όπως ισορρόπηση δέντρων και ανάλυση δομών δεδομένων.
+	\newpage
+	% ==================================================
+	\section{Άσκηση 5: Ανάπλαση Δυαδικού Δέντρου από Διαπεράσεις}
+	
+	\subsection{Εκφώνηση}
+	Δίνεται ένα δυαδικό δέντρο με μοναδικούς χαρακτήρες.
+	
+	Να εξηγηθεί και να υλοποιηθεί η ανάπλαση του δέντρου όταν δίνονται:
+	\begin{itemize}
+		\item Ενδοδιαπέραση (Inorder) + Μεταδιαπέραση (Postorder)
+		\item Ενδοδιαπέραση (Inorder) + Προδιαπέραση (Preorder)
+	\end{itemize}
+	
+	Να επιβεβαιωθεί το αποτέλεσμα με εκτύπωση μιας διαπέρασης.
+	
+	\subsection{Θεωρητική Ανάλυση}
+	
+	Η ανακατασκευή δυαδικού δέντρου είναι δυνατή όταν γνωρίζουμε δύο συγκεκριμένες διαπεράσεις, υπό την προϋπόθεση ότι οι κόμβοι είναι μοναδικοί.
+	
+	\subsubsection{Inorder + Preorder}
+	Στην προδιάταξη, ο πρώτος κόμβος είναι πάντα η ρίζα.  
+	Στην ενδοδιάταξη, η θέση της ρίζας χωρίζει το δέντρο σε:
+	\begin{itemize}
+		\item αριστερό υποδέντρο
+		\item δεξί υποδέντρο
+	\end{itemize}
+	
+	Η διαδικασία εφαρμόζεται αναδρομικά.
+	
+	\subsubsection{Inorder + Postorder}
+	Στην μεταδιάταξη, ο τελευταίος κόμβος είναι η ρίζα.  
+	Και πάλι, η ενδοδιάταξη καθορίζει τη δομή των υποδέντρων.
+	
+	\subsection{Αλγόριθμος Ανακατασκευής (Preorder + Inorder)}
+	
+	\begin{enumerate}
+		\item Ο πρώτος κόμβος της preorder είναι η ρίζα
+		\item Εντοπίζουμε τη ρίζα στην inorder
+		\item Διαχωρίζουμε αριστερό και δεξί υποδέντρο
+		\item Επαναλαμβάνουμε αναδρομικά
+	\end{enumerate}
+	
+	\begin{lstlisting}
+		char rootVal = preorder[*preIndex];
+		(*preIndex)++;
+		
+		int index = search(inorder, rootVal, left, right);
+		
+		root->left = build(... left subtree ...);
+		root->right = build(... right subtree ...);
+	\end{lstlisting}
+	
+	
+	\subsection{Αλγόριθμος Ανακατασκευής (Postorder + Inorder)}
+	
+	\begin{enumerate}
+		\item Ο τελευταίος κόμβος της postorder είναι η ρίζα
+		\item Εντοπίζουμε τη ρίζα στην inorder
+		\item Χτίζουμε πρώτα δεξί και μετά αριστερό υποδέντρο (σημαντικό!)
+	\end{enumerate}
+	
+	\begin{lstlisting}
+		char rootVal = postorder[*postIndex];
+		(*postIndex)--;
+		
+		int index = search(inorder, rootVal, left, right);
+		
+		root->right = build(...);
+		root->left = build(...);
+	\end{lstlisting}
+	
+	
+	\subsection{Επιβεβαίωση Ορθότητας}
+	
+	Για την επιβεβαίωση της ανάπλασης, εφαρμόζεται ενδοδιαπέραση στο δέντρο που κατασκευάστηκε και συγκρίνεται με την αρχική είσοδο.
+	
+	\begin{lstlisting}
+		void inorderPrint(struct Node* root) {
+			if(root == NULL) return;
+			
+			inorderPrint(root->left);
+			printf("%c ", root->data);
+			inorderPrint(root->right);
+		}
+	\end{lstlisting}
+	
+	
+	\subsection{Δεδομένα Ελέγχου}
+	
+	\begin{itemize}
+		\item Inorder: D B E A F C
+		\item Postorder: D E B F C A
+		\item Preorder: A B D E C F
+	\end{itemize}
+	
+	
+	\subsection{Αποτέλεσμα}
+	
+	Η ανάπλαση δίνει το αρχικό δυαδικό δέντρο:
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\textwidth]{askisi5Screenshot1.png}
+		\caption{Ανακατασκευασμένο δυαδικό δέντρο}
+	\end{figure}
+	
+	Η inorder διαπέραση του reconstructed tree επιβεβαιώνει την ορθότητα.
+	
+	
+	\subsection{Πολυπλοκότητα}
+	
+	\begin{itemize}
+		\item Χρονική πολυπλοκότητα: $O(n^2)$ (λόγω αναζήτησης σε πίνακα)
+		\item Χωρική πολυπλοκότητα: $O(n)$
+	\end{itemize}
+	
+	
+	\subsection{Συμπεράσματα}
+	
+	Η ανακατασκευή δυαδικού δέντρου είναι εφικτή όταν είναι γνωστή η ενδοδιαπέραση μαζί με preorder ή postorder, λόγω της μοναδικής πληροφορίας που προσφέρει η θέση της ρίζας. Η τεχνική αυτή χρησιμοποιείται σε parsing, compilers και tree reconstruction problems.
+	
+\end{document}
