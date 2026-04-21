@@ -38,7 +38,7 @@ int check(char* ekfrash) {
 
 int main() {
     char ekfrash[LENGTH];
-    printf("ekfrash: ");
+    printf("input: ");
     fgets(ekfrash, LENGTH, stdin);
-    printf(check(ekfrash) ? "Correct!" : "Wrong!");
+    printf("%s\n", check(ekfrash) ? "Correct!" : "Wrong!");
 }
