@@ -1,4 +1,18 @@
-# Project για το μάθημα Δομές Δεδομένων στην σχολή CEID του Πανεπιστημίου Πατρών
+# Project για το μάθημα Δομές Δεδομένων — C.E.I.D. University of Patras
+
+### Course: "Δομές Δεδομένων"
+
+This repository contains our team project developed for the course **"Δομές Δεδομένων"** at the **Computer Engineering and Informatics Department (C.E.I.D.) of the University of Patras**.
+
+👥 **Team Members**
+
+- [@EfthymiosKarapatakis](https://github.com/EfthymiosKarapatakis)
+- [@AngelikiChristopoulou](https://github.com/AngelikiChristopoulou)
+- [@IoannisAndriopoulos](https://github.com/IoannisAndriopoulos)
+
+The project was developed entirely in **C** and focuses on concepts related to programming languages, interpretation/translation techniques, and software design.
+
+📄 For a complete explanation of the methodology, implementation, and evaluation, please read below
 
 ## Εκφώνηση:
 
